@@ -188,6 +188,10 @@ function main_func() {
             }],
         propsShowList: [
             {
+                "name": "client_ip",
+                "isShow": true
+            },
+            {
                 "name": "model",
                 "isShow": true
             },
@@ -317,6 +321,7 @@ function main_func() {
 
     //初始化所有按钮
     const initRenderMethod = async () => {
+        initLANSettings()
         initSmsForwardModal()
         initChangePassData()
         adbQuery()
@@ -331,6 +336,7 @@ function main_func() {
         initLightStatus()
         initBandForm()
         initUSBNetworkType()
+        initNFCSwitch()
         initWIFISwitch()
         rebootDeviceBtnInit()
         handlerCecullarStatus()
@@ -656,6 +662,7 @@ function main_func() {
             }
 
             let statusHtml_other = {
+                client_ip: `${notNullOrundefinedOrIsShow(res, 'client_ip') ? `<strong onclick="copyText(event)"  class="blue">客户端IP：${res.client_ip}</strong>` : ''}`,
                 model: `${notNullOrundefinedOrIsShow(res, 'model') ? `<strong onclick="copyText(event)"  class="blue">设备型号：${res.model}</strong>` : ''}`,
                 cr_version: `${notNullOrundefinedOrIsShow(res, 'cr_version') ? `<strong onclick="copyText(event)"  class="blue">版本号：${res.cr_version}</strong>` : ''}`,
                 iccid: `${notNullOrundefinedOrIsShow(res, 'iccid') ? `<strong onclick="copyText(event)"  class="blue">ICCID：${res.iccid}</strong>` : ''}`,
@@ -696,7 +703,7 @@ function main_func() {
         }
     }
     handlerStatusRender(true)
-    StopStatusRenderTimer = requestInterval(() => handlerStatusRender(), 800)
+    StopStatusRenderTimer = requestInterval(() => handlerStatusRender(), 1000)
 
     //检查usb调试状态
     let handlerADBStatus = async () => {
@@ -1524,7 +1531,7 @@ function main_func() {
             e.target.innerHTML = '停止刷新'
             createToast('已开始刷新', 'green')
             cellInfoRequestTimer = requestInterval(() => initCellInfo(), 1500)
-            StopStatusRenderTimer = requestInterval(() => handlerStatusRender(), 800)
+            StopStatusRenderTimer = requestInterval(() => handlerStatusRender(), 1000)
         } else {
             e.target.innerHTML = '开始刷新'
             createToast('已停止刷新', 'green')
@@ -1896,7 +1903,6 @@ function main_func() {
             console.error(e.message)
             // createToast(e.message)
         }
-
     }
 
     let handleWifiEncodeChange = (event) => {
@@ -2307,7 +2313,7 @@ function main_func() {
             //没电池的不显示此按钮
             btn.style.display = 'none'
         }
-        btn.style.backgroundColor = '#018ad8b0'
+        btn.style.backgroundColor = 'var(--dark-btn-color)'
         btn.onclick = async () => {
             if (!(await initRequestData())) {
                 btn.onclick = () => createToast('请登录', 'red')
@@ -2371,6 +2377,8 @@ function main_func() {
             console.log('TTYD已找到，正在启用。。。')
             TTYD.style.display = ''
             setTimeout(() => {
+                const title = TTYD.querySelector('.title strong')
+                title && (title.innerHTML = "TTYD")
                 list.innerHTML = `
         <li style = "padding:10px">
                     <iframe src="http://${res.ip}" style="border:none;padding:0;margin:0;width:100%;height:400px;border-radius: 10px;overflow: hidden;opacity: .6;"></iframe>
@@ -2716,6 +2724,60 @@ function main_func() {
         QOSRDPCommand("AT+CGEQOSRDP=1")
     }
     initSimCardType()
+
+    //NFC切换
+    let initNFCSwitch = async () => {
+        const btn = document.querySelector('#NFC')
+        // 查询是否支持NFC
+        const { is_support_nfc_functions } = await getData(new URLSearchParams({
+            cmd: 'is_support_nfc_functions'
+        }))
+        if (!is_support_nfc_functions || Number(is_support_nfc_functions) == 0) {
+            return
+        } else {
+            btn.style.display = ''
+        }
+        if (!(await initRequestData())) {
+            btn.onclick = () => createToast('请登录', 'red')
+            btn.style.backgroundColor = '#80808073'
+            return null
+        }
+        btn.style.backgroundColor = ''
+        const { web_wifi_nfc_switch } = await getData(new URLSearchParams({
+            cmd: 'web_wifi_nfc_switch'
+        }))
+
+        btn.onclick = async () => {
+            try {
+                if (!(await initRequestData())) {
+                    btn.style.backgroundColor = '#80808073'
+                    return null
+                }
+                const cookie = await login()
+                if (!cookie) {
+                    createToast('登录失败，请检查密码', 'red')
+                    out()
+                    return null
+                }
+                let res = await (await postData(cookie, {
+                    goformId: 'WIFI_NFC_SET',
+                    web_wifi_nfc_switch: web_wifi_nfc_switch.toString() == '1' ? '0' : '1'
+                })).json()
+                if (res.result == 'success') {
+                    createToast('操作成功！', 'green')
+                    initNFCSwitch()
+                } else {
+                    createToast('操作失败！', 'red')
+                }
+            } catch (e) {
+                // createToast(e.message)
+            }
+        }
+
+        btn.style.backgroundColor = web_wifi_nfc_switch.toString() == '1' ? '#018ad8b0' : ''
+        btn.innerHTML = web_wifi_nfc_switch.toString() == '1' ? '关闭NFC' : '开启NFC'
+    }
+    initNFCSwitch()
 
     let changeSimCard = async (e) => {
         const value = e.target.value.trim()
@@ -3275,6 +3337,24 @@ function main_func() {
         }
     }
 
+    //初始化短信转发开关
+    const initSmsForwardSwitch = async () => {
+        const { enabled } = await (await fetch(`${KANO_baseURL}/sms_forward_enabled`, {
+            method: 'GET',
+            headers: common_headers
+        })).json()
+        const collapse_smsforward = document.querySelector('#collapse_smsforward')
+        if (!collapse_smsforward) {
+            localStorage.setItem('collapse_smsforward', enabled == "1" ? 'open' : 'close')
+            return
+        }
+        if (collapse_smsforward.dataset.name == 'open' && enabled != "1") {
+            collapse_smsforward.dataset.name = 'close'
+        } else if (collapse_smsforward.dataset.name == 'close' && enabled == "1") {
+            collapse_smsforward.dataset.name = 'open'
+        }
+    }
+
     //切换短信转发方式
     const switchSmsForwardMethod = (method) => {
         const smsForwardForm = document.querySelector('#smsForwardForm')
@@ -3296,6 +3376,7 @@ function main_func() {
         initSmsForward(false, method)
         return method.toLowerCase()
     }
+
     //初始化短信转发模态框
     const initSmsForwardModal = async () => {
         const btn = document.querySelector('#smsForward')
@@ -3305,9 +3386,10 @@ function main_func() {
             return null
         }
         btn.style.backgroundColor = 'var(--dark-btn-color)'
-        btn.onclick = () => {
-            showModal('#smsForwardModal')
+        btn.onclick = async () => {
             initSmsForward()
+            await initSmsForwardSwitch()
+            showModal('#smsForwardModal')
         }
     }
     initSmsForwardModal()
@@ -3438,11 +3520,214 @@ function main_func() {
         }
     })
 
-    //初始化短信转发开关
+    // OP
+    const OP = (e) => {
+        e.preventDefault()
+        createToast('获得成就：原神启动！', 'pink')
+        closeModal('#TTYDModal')
+        const TTYD = document.querySelector('#TTYD')
+        if (!TTYD) return
+        const title = TTYD.querySelector('.title strong')
+        title && (title.innerHTML = "?")
+        const list = TTYD.querySelector('.deviceList')
+        list.innerHTML = `
+        <li style = "padding:10px">
+                    <iframe src="https://cg.163.com/#/mobile" style="border:none;padding:0;margin:0;width:100%;height:600px;border-radius: 10px;overflow: hidden;opacity: 1;"></iframe>
+        </li > `
+    }
 
+    //内网设置
+    const initLANSettings = async () => {
+        const btn = document.querySelector('#LANManagement')
+        if (!(await initRequestData())) {
+            btn.onclick = () => createToast('请登录', 'red')
+            btn.style.backgroundColor = '#80808073'
+            return null
+        }
+        btn.style.backgroundColor = 'var(--dark-btn-color)'
+        btn.onclick = async () => {
+            //获取当前局域网设置
+            try {
+                const res = await getData(new URLSearchParams({
+                    cmd: 'lan_ipaddr,lan_netmask,mac_address,dhcpEnabled,dhcpStart,dhcpEnd,dhcpLease_hour,mtu,tcp_mss'
+                }))
+                if (res) {
+                    const { lan_ipaddr, lan_netmask, dhcpEnabled, dhcpStart, dhcpEnd, dhcpLease_hour } = res
+                    const form = document.querySelector('#LANManagementForm')
+                    form.querySelector('input[name="lanIp"]').value = lan_ipaddr || ''
+                    form.querySelector('input[name="lanNetmask"]').value = lan_netmask || ''
+                    form.querySelector('input[name="dhcpStart"]').value = dhcpStart || ''
+                    form.querySelector('input[name="dhcpEnd"]').value = dhcpEnd || ''
+                    form.querySelector('input[name="dhcpLease"]').value = dhcpLease_hour.replace('h', '') || ''
+                    form.querySelector('input[name="lanDhcpType"]').value = dhcpEnabled == '1' ? 'SERVER' : 'DISABLE'
+                    // 设置开关状态
+                    const collapse_dhcp = document.querySelector('#collapse_dhcp')
+                    if (collapse_dhcp.dataset.name == 'open' && dhcpEnabled != '1') {
+                        collapse_dhcp.dataset.name = 'close'
+                    } else if (collapse_dhcp.dataset.name == 'close' && dhcpEnabled == '1') {
+                        collapse_dhcp.dataset.name = 'open'
+                    }
+
+                } else {
+                    createToast('获取局域网设置失败', 'red')
+                }
+            } catch (e) {
+                createToast('获取局域网设置失败', 'red')
+            }
+            showModal('#LANManagementModal')
+        }
+    }
+    initLANSettings()
+
+    const onLANModalSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const cookie = await login()
+            if (!cookie) {
+                createToast('登录失败，请检查密码与网络', 'red')
+                return null
+            }
+
+            const form = e.target; // 获取表单
+            const formData = new FormData(form);
+
+            let data = {
+                lanIp: '192.168.0.1',
+                lanNetmask: '255.255.255.0',
+                lanDhcpType: 'DISABLE',
+                dhcpStart: '',
+                dhcpEnd: '',
+                dhcpLease: '',
+                dhcp_reboot_flag: '1',
+                mac_ip_reset: '0',
+            }
+
+            // dhcp开关
+            const lanDhcpType = formData.get('lanDhcpType') === 'SERVER';
+            if (lanDhcpType) {
+                data.lanDhcpType = 'SERVER';
+                data.mac_ip_reset = '1';
+            } else {
+                data.lanDhcpType = 'DISABLE';
+                data.mac_ip_reset = '0';
+            }
+
+            for (const [key, value] of formData.entries()) {
+                const val = value.trim();
+                switch (key) {
+                    case 'lanIp':
+                        if (!val || !isValidIP(val)) return createToast('请输入正确的网关地址', 'red');
+                        data[key] = val;
+                        break;
+                    case 'lanNetmask':
+                        if (!val || !isValidSubnetMask(val)) return createToast('请输入正确的子网掩码', 'red');
+                        data[key] = val;
+                        break;
+                    case 'dhcpStart': {
+                        if (data.lanDhcpType == 'DISABLE') break
+                        if (!val || !isValidIP(val)) return createToast('请输入正确的起始地址', 'red');
+                        const lanIp = formData.get('lanIp')?.trim();
+                        const netmask = formData.get('lanNetmask')?.trim();
+                        if (!isSameSubnet(val, lanIp, netmask)) {
+                            return createToast('DHCP 起始地址不在局域网IP所在网段内', 'red');
+                        }
+
+                        if (ipToInt(val) <= ipToInt(lanIp)) {
+                            return createToast('DHCP 起始地址应该比局域网IP地址大', 'red');
+                        }
+                        data[key] = val;
+                        break;
+                    }
+                    case 'dhcpEnd': {
+                        if (data.lanDhcpType == 'DISABLE') break
+                        if (!val || !isValidIP(val)) return createToast('请输入正确的结束地址', 'red');
+                        const start = formData.get('dhcpStart')?.trim();
+                        const lanIp = formData.get('lanIp')?.trim();
+                        const netmask = formData.get('lanNetmask')?.trim();
+
+                        if (!isSameSubnet(val, lanIp, netmask)) {
+                            return createToast('DHCP 结束地址不在局域网IP所在网段内', 'red');
+                        }
+
+                        if (start === val) return createToast('起始地址和结束地址不能相同', 'red');
+                        if (ipToInt(start) > ipToInt(val)) return createToast('起始地址不能大于结束地址', 'red');
+                        data[key] = val;
+                        break;
+                    }
+                    case 'dhcpLease':
+                        if (data.lanDhcpType == 'DISABLE') break
+                        if (Number(val) <= 0) return createToast('请输入正确的地址租期', 'red');
+                        data[key] = val;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            const lanIp = formData.get('lanIp')?.trim();
+            const netmask = formData.get('lanNetmask')?.trim();
+            if (isValidIP(lanIp) && isValidSubnetMask(netmask)) {
+                const dhcpStart = formData.get('dhcpStart')?.trim();
+                const dhcpEnd = formData.get('dhcpEnd')?.trim();
+                const networkAddr = getNetworkAddress(lanIp, netmask);
+                const broadcastAddr = getBroadcastAddress(lanIp, netmask);
+
+                // 网关 IP 不能是网络地址或广播地址
+                if (lanIp === networkAddr || lanIp === broadcastAddr) {
+                    return createToast('网关地址不能是网络地址或广播地址', 'red');
+                }
+
+                // DHCP 起始或结束地址不能是网络地址或广播地址
+                if (dhcpStart === networkAddr || dhcpStart === broadcastAddr) {
+                    return createToast('DHCP 起始地址不能是网络地址或广播地址', 'red');
+                }
+
+                if (dhcpEnd === networkAddr || dhcpEnd === broadcastAddr) {
+                    return createToast('DHCP 结束地址不能是网络地址或广播地址', 'red');
+                }
+
+                // 网关地址不能落在 DHCP 分配范围内
+                const lanInt = ipToInt(lanIp);
+                const startInt = ipToInt(dhcpStart);
+                const endInt = ipToInt(dhcpEnd);
+                if (lanInt >= startInt && lanInt <= endInt) {
+                    return createToast('网关地址不能落在 DHCP 分配范围内', 'red');
+                }
+            }
+
+            const res = await (await postData(cookie, {
+                goformId: 'DHCP_SETTING',
+                ...data
+            })).json()
+
+            if (res.result == 'success') {
+                createToast('设置成功! 设备正在重启~', 'green')
+                closeModal('#LANManagementModal')
+                setTimeout(() => {
+                    //循环等待
+                    let newURL = 'http://' + data.lanIp + ':2333'
+                    window.location.href = newURL
+                }, 30000);
+            } else {
+                throw '设置失败！请检查网络'
+            }
+        }
+        catch (e) {
+            console.error(e.message)
+            // createToast(e.message)
+        }
+    }
+
+    collapseGen("#collapse_dhcp_switch", "#collapse_dhcp", null, async (status) => {
+        const enableDHCP = document.querySelector('#enableDHCP')
+        if (!enableDHCP) return
+        enableDHCP.value = status == 'open' ? "SERVER" : "DISABLE"
+    })
 
     //挂载方法到window
     const methods = {
+        OP,
+        onLANModalSubmit,
         switchSmsForwardMethodTab,
         handleSmsForwardCurlForm,
         handleSmsForwardForm,

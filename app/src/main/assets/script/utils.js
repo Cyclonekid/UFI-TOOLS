@@ -249,10 +249,10 @@ function hsvToRgb(h, s, v) {
 function createSwitch({ text, value, className = '', onChange, fontSize = 14 }) {
     const container = document.createElement('div');
     container.className = 'Switch';
-    container.style.fontSize = fontSize + 'px'
+    container.style.fontSize = fontSize + 'px';
 
     const label = document.createElement('label');
-    label.style.display = "flex"
+    label.style.display = 'flex';
     label.className = `outer ${className}`;
 
     const span = document.createElement('span');
@@ -271,13 +271,19 @@ function createSwitch({ text, value, className = '', onChange, fontSize = 14 }) 
     input.type = 'checkbox';
     input.checked = value;
     input.className = 'inline-block w-5 h-5 align-sub';
-    input.addEventListener('click', (e) => {
-        const checked = e.target.checked;
+
+    function updateSwitchVisual(checked) {
+        input.checked = checked;
         if (checked) {
             switchDiv.classList.add('active');
         } else {
             switchDiv.classList.remove('active');
         }
+    }
+
+    input.addEventListener('click', (e) => {
+        const checked = e.target.checked;
+        updateSwitchVisual(checked);
         onChange?.(checked);
     });
 
@@ -285,6 +291,9 @@ function createSwitch({ text, value, className = '', onChange, fontSize = 14 }) 
     label.appendChild(switchDiv);
     label.appendChild(input);
     container.appendChild(label);
+
+    // 添加 update 方法到容器上，供外部使用
+    container.update = updateSwitchVisual;
 
     return container;
 }
@@ -327,22 +336,39 @@ const createCollapseObserver = (boxEl = null) => {
 }
 
 const collapseGen = (btn_id, collapse_id, storName, callback = undefined) => {
-    const { el: collapseMenuEl } = createCollapseObserver(document.querySelector(collapse_id))
-    collapseMenuEl.dataset.name = localStorage.getItem(storName) || 'open'
-    const collapseBtn = document.querySelector(btn_id)
+    const { el: collapseMenuEl } = createCollapseObserver(document.querySelector(collapse_id));
+    if (storName) {
+        collapseMenuEl.dataset.name = localStorage.getItem(storName) || 'open';
+    } else {
+        collapseMenuEl.dataset.name = 'open'; // 默认打开
+    }
+    const collapseBtn = document.querySelector(btn_id);
     const switchComponent = createSwitch({
         value: collapseMenuEl.dataset.name == 'open',
-        className: storName,
+        className: storName || collapse_id,
         onChange: (newVal) => {
             if (collapseMenuEl && collapseMenuEl.dataset) {
-                collapseMenuEl.dataset.name = newVal ? 'open' : 'close'
-                callback?.(newVal ? 'open' : 'close')
-                localStorage.setItem(storName, collapseMenuEl.dataset.name)
+                collapseMenuEl.dataset.name = newVal ? 'open' : 'close';
+                callback?.(newVal ? 'open' : 'close');
+                if (storName) {
+                    localStorage.setItem(storName, collapseMenuEl.dataset.name);
+                }
             }
         }
     });
+
+    // 用 container.update 来同步状态
+    const observer = new MutationObserver(() => {
+        const newVal = collapseMenuEl.dataset.name === 'open';
+        switchComponent.update?.(newVal);
+    });
+    observer.observe(collapseMenuEl, {
+        attributes: true,
+        attributeFilter: ['data-name'],
+    });
+
     collapseBtn.appendChild(switchComponent);
-}
+};
 
 //inputIMEI
 const inputIMEIAT = () => {
@@ -383,4 +409,46 @@ const getApkDate = (filename = null) => {
             formatted_date: null
         }
     }
+}
+
+const isValidIP = (ip) => {
+    const regex = /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/;
+    return regex.test(ip);
+}
+
+const isValidSubnetMask = (mask) => {
+    return [
+        "255.0.0.0", "255.128.0.0",
+        "255.192.0.0", "255.224.0.0", "255.240.0.0", "255.248.0.0", "255.252.0.0",
+        "255.254.0.0", "255.255.0.0", "255.255.128.0", "255.255.192.0",
+        "255.255.224.0", "255.255.240.0", "255.255.248.0", "255.255.252.0",
+        "255.255.254.0", "255.255.255.0", "255.255.255.128", "255.255.255.192",
+        "255.255.255.224", "255.255.255.240", "255.255.255.248",
+        "255.255.255.252", "255.255.255.254"
+    ].includes(mask);
+}
+
+const ipToInt = (ip) => {
+    return ip.split('.').reduce((res, octet) => (res << 8) + parseInt(octet), 0);
+}
+
+const isSameSubnet = (ip1, ip2, netmask) => {
+    return (ipToInt(ip1) & ipToInt(netmask)) === (ipToInt(ip2) & ipToInt(netmask));
+}
+
+const getNetworkAddress = (ip, mask) => {
+    return intToIp(ipToInt(ip) & ipToInt(mask));
+}
+
+const getBroadcastAddress = (ip, mask) => {
+    return intToIp((ipToInt(ip) & ipToInt(mask)) | (~ipToInt(mask) >>> 0));
+}
+
+const intToIp = (int) => {
+    return [
+        (int >>> 24) & 255,
+        (int >>> 16) & 255,
+        (int >>> 8) & 255,
+        int & 255
+    ].join('.');
 }

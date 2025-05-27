@@ -233,6 +233,14 @@ const getUFIData = async () => {
             model = battery_res.model
         } catch {/*没有，不处理*/ }
 
+        //获取请求的客户端IP地址
+
+        let client_ip = null
+        try {
+            const { ip } = await (await fetch(`${KANO_baseURL}/ip`, { headers: common_headers })).json()
+            client_ip = ip
+        } catch {/*没有，不处理*/ }
+
         //获取storage_and_dailyData，整合（如果有）
         let daily_data = null
         let internal_available_storage = null
@@ -272,7 +280,8 @@ const getUFIData = async () => {
             external_available_storage,
             external_total_storage,
             internal_used_storage,
-            external_used_storage
+            external_used_storage,
+            client_ip
         }
     } catch (error) {
         if (error.name === 'AbortError') {

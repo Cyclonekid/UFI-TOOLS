@@ -29,51 +29,49 @@
             <div class="actions collapse collapse_menu" data-name="close"
                 style="flex-shrink: 0;text-align: start;align-self: flex-start">
                 <div style="margin: 0 2px;margin-bottom: 10px;" class="collapse_box">
-                    <div>
-                        <button id="CLEAR" class="btn">登录/退出登录</button>
-                        <button id="CHANGEPWD" class="btn" onclick="createToast('请登录','red')">更改密码</button>
-                        <button id="REBOOT" class="btn" onclick="createToast('请登录','red')">重启设备</button>
-                        <button id="SCHEDULE_REBOOT" class="btn" onclick="createToast('请登录','red')">定时重启</button>
-                        <button id="SHUTDOWN" style="display: none;" class="btn"
-                            onclick="createToast('请登录','red')">关机</button>
-                    </div>
-                    <div>
-                        <button id="BG_SETTING" class="btn" onclick="createToast('请登录','red')">主题背景</button>
-                        <button id="SMS" class="btn">短信收发</button>
-                        <button id="DataManagement" class="btn">流量管理</button>
-                        <button id="SpeedTestBtn" class="btn" onclick="showModal('#speedTestModal')">内网测速</button>
-                        <button id="ClientManagement" class="btn">连接设备管理</button>
-                        <button id="WIFIManagement" class="btn">WIFI设置</button>
-                        <button id="AT" class="btn" onclick="createToast('请登录','red')">AT指令</button>
-                        <button id="ADVANCE" class="btn" onclick="createToast('请登录','red')">高级功能</button>
-                        <button id="CECULLAR" class="btn" onclick="createToast('请登录','red')">开启蜂窝数据</button>
-                        <button id="ADB" class="btn" onclick="createToast('请登录','red')">开启USB调试</button>
-                        <button id="ADB_NET" class="btn" onclick="createToast('请登录','red')">开启网络ADB自启</button>
-                        <button id="PERF" class="btn" onclick="createToast('请登录','red')">开启性能模式</button>
-                        <button id="LIGHT" class="btn" onclick="createToast('请登录','red')">开启指示灯</button>
-                        <button id="SMB" class="btn" onclick="createToast('请登录','red')">开启SMB文件共享</button>
-                        <button id="ROAM" class="btn" onclick="createToast('请登录','red')">开启网络漫游</button>
-                        <button id="smsForward" class="btn" onclick="createToast('请登录','red')">短信转发</button>
-                        <button id="OTA" class="btn" onclick="createToast('请登录','red')">软件更新</button>
-                        <select class="select" id="NET_TYPE" onchange="changeNetwork(event)">
-                            <option value="WL_AND_5G">5G/4G/3G</option>
-                            <option value="LTE_AND_5G">5G NSA</option>
-                            <option value="Only_5G">5G SA</option>
-                            <option value="WCDMA_AND_LTE">4G/3G</option>
-                            <option value="Only_LTE">仅4G</option>
-                            <option value="Only_WCDMA">仅3G</option>
-                        </select>
-                        <select class="select" id="USB_TYPE" onchange="changeUSBNetwork(event)">
-                            <option value="0">USB上网:自动</option>
-                            <option value="1">RNDIS</option>
-                            <option value="2">CDC-ECM</option>
-                        </select>
-                        <select class="select" id="SIM_CARD_TYPE" style="display: none;"
-                            onchange="changeSimCard(event)">
-                            <option value="0">SIM卡1</option>
-                            <option value="1">SIM卡2</option>
-                        </select>
-                    </div>
+                    <button id="CLEAR" class="btn">登录/退出登录</button>
+                    <button id="CHANGEPWD" class="btn" onclick="createToast('请登录','red')">更改密码</button>
+                    <button id="REBOOT" class="btn" onclick="createToast('请登录','red')">重启设备</button>
+                    <button id="SCHEDULE_REBOOT" class="btn" onclick="createToast('请登录','red')">定时重启</button>
+                    <button id="SHUTDOWN" style="display: none;" class="btn"
+                        onclick="createToast('请登录','red')">关机</button>
+                    <button id="BG_SETTING" class="btn" onclick="createToast('请登录','red')">主题背景</button>
+                    <button id="SMS" class="btn">短信收发</button>
+                    <button id="DataManagement" class="btn">流量管理</button>
+                    <button id="SpeedTestBtn" class="btn" onclick="showModal('#speedTestModal')">内网测速</button>
+                    <button id="ClientManagement" class="btn">连接设备管理</button>
+                    <button id="WIFIManagement" class="btn">WIFI设置</button>
+                    <button id="LANManagement" class="btn">内网设置</button>
+                    <button id="AT" class="btn" onclick="createToast('请登录','red')">AT指令</button>
+                    <button id="ADVANCE" class="btn" onclick="createToast('请登录','red')">高级功能</button>
+                    <button id="CECULLAR" class="btn" onclick="createToast('请登录','red')">开启蜂窝数据</button>
+                    <button id="ADB" class="btn" onclick="createToast('请登录','red')">开启USB调试</button>
+                    <button id="ADB_NET" class="btn" onclick="createToast('请登录','red')">开启网络ADB自启</button>
+                    <button id="PERF" class="btn" onclick="createToast('请登录','red')">开启性能模式</button>
+                    <button id="LIGHT" class="btn" onclick="createToast('请登录','red')">开启指示灯</button>
+                    <button id="NFC" style="display: none;" class="btn"
+                        onclick="createToast('请登录','red')">开启NFC</button>
+                    <button id="SMB" class="btn" onclick="createToast('请登录','red')">开启SMB文件共享</button>
+                    <button id="ROAM" class="btn" onclick="createToast('请登录','red')">开启网络漫游</button>
+                    <button id="smsForward" class="btn" onclick="createToast('请登录','red')">短信转发</button>
+                    <button id="OTA" class="btn" onclick="createToast('请登录','red')">软件更新</button>
+                    <select class="select" id="NET_TYPE" onchange="changeNetwork(event)">
+                        <option value="WL_AND_5G">5G/4G/3G</option>
+                        <option value="LTE_AND_5G">5G NSA</option>
+                        <option value="Only_5G">5G SA</option>
+                        <option value="WCDMA_AND_LTE">4G/3G</option>
+                        <option value="Only_LTE">仅4G</option>
+                        <option value="Only_WCDMA">仅3G</option>
+                    </select>
+                    <select class="select" id="USB_TYPE" onchange="changeUSBNetwork(event)">
+                        <option value="0">USB上网:自动</option>
+                        <option value="1">RNDIS</option>
+                        <option value="2">CDC-ECM</option>
+                    </select>
+                    <select class="select" id="SIM_CARD_TYPE" style="display: none;" onchange="changeSimCard(event)">
+                        <option value="0">SIM卡1</option>
+                        <option value="1">SIM卡2</option>
+                    </select>
                 </div>
             </div>
             <!-- 状态 -->
@@ -107,10 +105,6 @@
                 <div class="collapse" id="collapse_ttyd">
                     <div class="collapse_box">
                         <ul class="deviceList">
-                            <!-- <li style="padding:10px">
-                        <iframe src="http://192.168.0.1:1145/"
-                            style="border:none;padding:0;margin:0;width:100%;height:400px;border-radius: 10px;overflow: hidden;opacity: .6;"></iframe>
-                    </li> -->
                         </ul>
                     </div>
                 </div>
@@ -365,7 +359,7 @@
             <!-- 状态管理模态框 -->
             <div id="dictionaryModal" class="modal" style="display: none;width: 90%;max-width: 400px;">
                 <div class="title">状态显示/隐藏</div>
-                <p style="font-size: 12px;"><i>注：设备不支持/为空的状态无论是否勾选也不会显示</i></p>
+                <p style="font-size: 12px;"><i>注：设备不支持/为空的状态无论是否勾选也不会显示;如果碰到有字段不显示等问题，可以点击重置字段或者清除浏览器数据</i></p>
                 <div class="content" id="DIC_LIST" style="
                 overflow-y: scroll;
                 max-height:400px;
@@ -425,6 +419,7 @@
                     </ul>
                     <div class="title" style="margin: 10px 0;">设备属性</div>
                     <ul class="drag" id="draggable_props">
+                        <li draggable="true"> <label><input type="checkbox" data-name="client_ip">客户端IP</label></li>
                         <li draggable="true"> <label><input type="checkbox" data-name="model">设备型号</label></li>
                         <li draggable="true"> <label><input type="checkbox" data-name="cr_version">版本号</label></li>
                         <li draggable="true"> <label><input type="checkbox" data-name="iccid">ICCID</label></li>
@@ -615,6 +610,81 @@
                     </form>
                 </div>
             </div>
+            <!-- 内网设置模态框 -->
+            <div class="mask" id="LANManagementModal" style="display: none">
+                <div class="modal">
+                    <div class="title" style="margin-bottom: 4px;">内网设置</div>
+                    <form onsubmit="onLANModalSubmit(event)" id="LANManagementForm">
+                        <div class="content" style="
+                        overflow-y: scroll;
+                        padding: 10px;
+                        width: 66vw;
+                        max-height: 100%;
+                        max-width: 400px;">
+                            <div class="dash-border-round">
+                                <div class="item">
+                                    <label style="
+                                display: flex;
+                                align-items: center;
+                            "><span class="label-name">网关地址：</span><input
+                                            style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px" name="lanIp"
+                                            type="text" placeholder="请输入路由器网关地址"></label>
+                                </div>
+                            </div>
+                            <div class="dash-border-round">
+                                <div class="item">
+                                    <label style="
+                                display: flex;
+                                align-items: center;
+                            "><span class="label-name">子网掩码：</span><input
+                                            style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px"
+                                            name="lanNetmask" type="text" placeholder="请输入子网掩码"></label>
+                                </div>
+                            </div>
+                            <div class="dash-border-round">
+                                <div class="item">
+                                    <label style="display: flex;align-items: center;"><span class="label-name"
+                                            style="padding: 6px 4px; margin: 4px 2px">DHCP开关：</span>
+                                        <div style="display: inline-block;" id="collapse_dhcp_switch"></div>
+                                        <input style="display: none;" id="enableDHCP" value="SERVER" type="text" name="lanDhcpType">
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="collapse_dhcp" class="collapse">
+                                <div class="collapse_box">
+                                    <div class="dash-border-round">
+                                        <div class="item" style="
+                                display: flex;
+                                align-items: center;
+                                flex-direction: column;
+                            "><span class="label-name">DHCP IP池</span>
+                                            <input style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px"
+                                                name="dhcpStart" type="text" placeholder="起始地址">
+                                            <span style="transform: rotate(90deg);">&nbsp;->&nbsp;</span>
+                                            <input style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px"
+                                                name="dhcpEnd" type="text" placeholder="结束地址">
+                                        </div>
+                                    </div>
+                                    <div class="dash-border-round">
+                                        <div class="item">
+                                            <label style="
+                                display: flex;
+                                align-items: center;
+                            "><span class="label-name">DHCP租期：</span><input
+                                                    style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px;"
+                                                    name="dhcpLease" type="number" min="1" placeholder="租期(24)h"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="btn" style="text-align: right;margin-top: 6px;">
+                            <button type="submit">提交</button>
+                            <button type="button" onclick="closeModal('#LANManagementModal')">关闭</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
             <!-- 连接设备管理模态框 -->
             <div class="mask" id="ClientManagementModal" style="display: none">
                 <div class="modal" style="width: 90%;max-width: 600px; display: flex;flex-direction: column;">
@@ -706,6 +776,7 @@
                             <p>TTYD端口号：<input name="ttyd_port" placeholder="1145" type="number" id="TTYD_INPUT"
                                     style="width: 100%;max-width: 100px;padding: 6px 10px;margin: 4px 0;">
                             </p>
+                            <button class="btn" onclick="OP(event)">?</button>
                         </div>
                         <div class="btn" style="text-align: right;margin-top: 6px;">
                             <button type="submit">提交</button>
