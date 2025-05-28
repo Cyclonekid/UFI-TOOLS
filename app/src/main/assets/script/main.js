@@ -798,6 +798,13 @@ function main_func() {
                     out()
                     return null
                 }
+                // usb调试需要同步开启
+                if (!(res.enabled == "true" || res.enabled == true)) {
+                    await (await postData(cookie, {
+                        goformId: 'USB_PORT_SETTING',
+                        usb_port_switch: '1'
+                    })).json()
+                }
                 let res1 = await (await fetch(`${KANO_baseURL}/adb_wifi_setting`, {
                     method: 'POST',
                     headers: {
@@ -811,6 +818,7 @@ function main_func() {
                 })).json()
                 if (res1.result == 'success') {
                     createToast('操作成功！重启生效', 'green')
+                    await handlerADBStatus()
                     await handlerADBNetworkStatus()
                 } else {
                     createToast('操作失败！', 'red')
@@ -3218,8 +3226,11 @@ function main_func() {
                 if (!isLatest) {
                     changelogTextContent.innerHTML = changelog
                 }
-                OTATextContent.innerHTML = `${isLatest ? `<div>当前已是最新版本：V${app_ver} ${app_ver_code}</div>` : `<div>发现更新:${name}<br/>${date_str ? `<br/>发布日期：${date_str}` : ''}</div><br/>`}`
-                return !isLatest ? version + ' ' + date_str : null
+                OTATextContent.innerHTML = `${isLatest ? `<div>当前已是最新版本：V${app_ver} ${app_ver_code}</div>` : `<div>发现更新:${name}<br/>${date_str ? `发布日期：${date_str}` : ''}</div>`}`
+                return !isLatest ? {
+                    isForceUpdate: name.includes('force'),
+                    text: version + ' ' + date_str
+                } : null
 
             } else {
                 throw new Error('出错')
@@ -3310,7 +3321,7 @@ function main_func() {
     setTimeout(() => {
         checkUpdateAction(true).then((res) => {
             if (res) {
-                createToast(`发现新版本：V${res}`)
+                createToast(`发现${res.isForceUpdate ? "常驻更新" : "新版本"}：${res.text}`)
             }
         })
     }, 100);

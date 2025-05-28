@@ -82,20 +82,24 @@
                 <div class="title" style="margin: 6px 0;">
                     <strong>基本状态</strong>
                     <div style="display: inline-block;" id="collapse_status_btn"></div>
-                    <button id="DICTIONARY" class="btn" style="padding: 4px;margin-left: 10px;">管理字段</button>
-                    <button id="REFRESH" class="btn" style="padding: 4px;margin-left: 10px;">停止刷新</button>
                 </div>
                 <div class="collapse" id="collapse_status">
                     <div class="collapse_box">
-                        <ul class="deviceList" id="STATUS">
-                            <li style="padding-top: 15px;">
-                                <strong class="green"
-                                    style="margin: 10px auto;margin-top: 0; display: flex;flex-direction: column;padding: 40px;">
-                                    <span style="font-size: 50px;" class="spin">🌀</span>
-                                    <span style="font-size: 16px;padding-top: 10px;">loading...</span>
-                                </strong>
-                            </li>
-                        </ul>
+                        <div style="overflow: auto;">
+                            <div class="title" style="margin-bottom: 6px;">
+                                <button id="DICTIONARY" class="btn" style="padding: 4px;margin-left: 0;">管理字段</button>
+                                <button id="REFRESH" class="btn" style="padding: 4px;margin-left: 10px;">停止刷新</button>
+                            </div>
+                            <ul class="deviceList" id="STATUS">
+                                <li style="padding-top: 15px;">
+                                    <strong class="green"
+                                        style="margin: 10px auto;margin-top: 0; display: flex;flex-direction: column;padding: 40px;">
+                                        <span style="font-size: 50px;" class="spin">🌀</span>
+                                        <span style="font-size: 16px;padding-top: 10px;">loading...</span>
+                                    </strong>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -963,16 +967,15 @@
                     <div style="font-size: 12px;margin-top: 10px;" class="adb_status title"></div>
                     <div class="title" style="font-size: 10px;margin-top: 10px;">
                         <div>
-                            <i>软件更新功能需要启用网络ADB调试功能，没有启用无法使用 ”一键更新“ 功能，可以点击 "下载安装包" 自行下载安装，如果更新失败，可以关闭窗口再试</i><br>
+                            <i>软件更新功能需要启用网络ADB调试功能，如无法正常使用 ”一键更新“ 功能，可以点击 "下载安装包" 自行下载安装。</i><br>
                             <i>使用有线网络的用户，请暂时关掉"网络ADB自启"开关，否则更新完成之后会断网</i>
                         </div>
                     </div>
+                    <div class="speedtest" style="border-left: 6px solid pink;font-size: 12px;margin-top: 10px;"
+                        id="OTATextContent">正在检查更新...</div>
                     <div class="content" style="
-                        overflow-y: scroll;
-                        margin: 15px 0;
-                        max-width: 400px;">
-                        <div class="speedtest" style="font-size: 12px;" id="OTATextContent">正在检查更新...</div>
-                        <div class="speedtest" style="font-size: 12px;margin-top: 10px;" id="ChangelogTextContent">
+                        margin: 15px 0;overflow-y: scroll;">
+                        <div class="speedtest" style="font-size: 12px;" id="ChangelogTextContent">
                         </div>
                     </div>
                     <div class="btn" style="text-align: right;">
@@ -1054,12 +1057,13 @@
                             <form onsubmit="handleSmsForwardCurlForm(event)" id="smsForwardCurlForm"
                                 style="display: none;">
                                 <div class="content" style="
-                        overflow-y: scroll;
-                        padding: 15px;
-                        width: 66vw;
-                        max-width: 400px;">
-                                    <div class="title" style="font-size: 12px;">
-                                        短信内容占位符：{{sms-body}} {{sms-time}} {{sms-from}}
+                                    overflow-y: scroll;
+                                    padding: 15px;
+                                    width: 66vw;
+                                    max-width: 400px;">
+                                    <div class="title user_select" style="display:block;font-size: 12px;">
+                                        注意：命令需是“一口气”输入的，不要中途按回车换行或用 \ 接续，注意参数间的空格<br>
+                                        短信内容占位符：<span onclick="copyText(event)">{{sms-body}} {{sms-time}} {{sms-from}}</span>
                                     </div>
                                     <div class="item" style="margin: 10px auto;">
                                         <div style="
