@@ -36,7 +36,10 @@
                     <button id="SHUTDOWN" style="display: none;" class="btn"
                         onclick="createToast('请登录','red')">关机</button>
                     <button id="BG_SETTING" class="btn" onclick="createToast('请登录','red')">主题背景</button>
-                    <button id="SMS" class="btn">短信收发</button>
+                    <div style="display: inline-block;position: relative;">
+                        <div class="tip" style="display: none;" id="UNREAD_SMS">0</div>
+                        <button id="SMS" class="btn">短信收发</button>
+                    </div>
                     <button id="DataManagement" class="btn">流量管理</button>
                     <button id="SpeedTestBtn" class="btn" onclick="showModal('#speedTestModal')">内网测速</button>
                     <button id="ClientManagement" class="btn">连接设备管理</button>
@@ -646,7 +649,8 @@
                                     <label style="display: flex;align-items: center;"><span class="label-name"
                                             style="padding: 6px 4px; margin: 4px 2px">DHCP开关：</span>
                                         <div style="display: inline-block;" id="collapse_dhcp_switch"></div>
-                                        <input style="display: none;" id="enableDHCP" value="SERVER" type="text" name="lanDhcpType">
+                                        <input style="display: none;" id="enableDHCP" value="SERVER" type="text"
+                                            name="lanDhcpType">
                                     </label>
                                 </div>
                             </div>
@@ -672,7 +676,8 @@
                                 align-items: center;
                             "><span class="label-name">DHCP租期：</span><input
                                                     style="flex: 1;width: 100%;padding: 6px 4px; margin: 4px 2px;"
-                                                    name="dhcpLease" type="number" min="1" placeholder="租期(24)h"></label>
+                                                    name="dhcpLease" type="number" min="1"
+                                                    placeholder="租期(24)h"></label>
                                         </div>
                                     </div>
                                 </div>
@@ -1054,7 +1059,7 @@
                         width: 66vw;
                         max-width: 400px;">
                                     <div class="title" style="font-size: 12px;">
-                                        短信内容占位符为：{{sms}}
+                                        短信内容占位符：{{sms-body}} {{sms-time}} {{sms-from}}
                                     </div>
                                     <div class="item" style="margin: 10px auto;">
                                         <div style="

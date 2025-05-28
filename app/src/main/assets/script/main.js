@@ -535,6 +535,16 @@ function main_func() {
                 date_b.pop()
                 return Number(date_b.join('')) - Number(date_a.join(''))
             })
+            // 收集所有id，已读操作
+            const allIds = res?.filter(item => item.tag == '1')?.map(item => item.id)
+            if (allIds && allIds.length > 0) {
+                try {
+                    console.log(allIds, '批量已读短信');
+                    readSmsByIds(allIds)
+                } catch (error) {
+                    console.log('批量已读短信失败', error);
+                }
+            }
             list.innerHTML = res.map(item => {
                 let date = item.date.split(',')
                 date.pop()
@@ -549,7 +559,7 @@ function main_func() {
                                         </div>
                                         <p style="color:#adadad;font-size:16px;margin:4px 0">${item.number}</p>
                                         <p>${decodeBase64(item.content)}</p>
-                                        <p style="text-align:right;color:#adadad;margin-top:4px">${date}</p >
+                                        <p style="text-align:right;color:#adadad;margin-top:4px">${date}</p>
                                     </li > `
             }).join('')
         } else {
@@ -616,9 +626,21 @@ function main_func() {
             `
             }
 
-            if (QORS_MESSAGE) {
-                res['QORS_MESSAGE'] = QORS_MESSAGE
-            }
+            try {
+
+                if (QORS_MESSAGE) {
+                    res['QORS_MESSAGE'] = QORS_MESSAGE
+                }
+                const unreadEl = document.querySelector('#UNREAD_SMS')
+                if (res.sms_unread_num && res.sms_unread_num > 0) {
+                    unreadEl.style.display = ''
+                    unreadEl.innerHTML = res.sms_unread_num > 99 ? '99+' : res.sms_unread_num
+                } else {
+                    unreadEl.innerHTML = ''
+                    unreadEl.style.display = 'none'
+                }
+
+            } catch { }
 
             let statusHtml_base = {
                 network_type: `${notNullOrundefinedOrIsShow(res, 'network_type') ? `<strong onclick="copyText(event)"  class="green">蜂窝状态：${res.network_provider} ${res.network_type == '20' ? '5G' : res.network_type == '13' ? '4G' : res.network_type}</strong>` : ''}`,
@@ -3458,7 +3480,7 @@ function main_func() {
                 method: 'POST',
                 headers: {
                     ...common_headers,
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json;charset=UTF-8'
                 },
                 body: JSON.stringify({
                     curl_text: curl_text.trim(),

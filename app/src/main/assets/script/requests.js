@@ -174,6 +174,35 @@ const removeSmsById = async (id) => {
     return await res.json()
 }
 
+// 已读短信
+const readSmsByIds = async (ids) => {
+    if (!ids || !Array.isArray(ids) || ids.length === 0) {
+        throw new Error('请提供短信id数组');
+    }
+
+    const cookie = await login();
+    const results = [];
+
+    for (const id of ids) {
+        try {
+            const response = await postData(cookie, {
+                goformId: 'SET_MSG_READ',
+                msg_id: id,
+                notCallback: true,
+            });
+
+            const data = await response.json();
+            results.push({ id, success: data?.result == 'success', data });
+        } catch (err) {
+            console.error(`处理短信 ID ${id} 时出错:`, err);
+            results.push({ id, success: false, error: err.message || String(err) });
+        }
+    }
+
+    await logout(cookie);
+    return results;
+};
+
 //获取短信列表（base64编码）
 const getSmsInfo = async () => {
     const params = new URLSearchParams()
@@ -194,7 +223,7 @@ const getUFIData = async () => {
         const params = new URLSearchParams();
         params.append('_', Date.now().toString());
 
-        const cmd = 'sim_msisdn,data_volume_limit_switch,battery_value,battery_vol_percent,network_signalbar,network_rssi,cr_version,iccid,imei,imsi,ipv6_wan_ipaddr,lan_ipaddr,mac_address,msisdn,network_information,Lte_ca_status,rssi,Z5g_rsrp,lte_rsrp,wifi_access_sta_num,loginfo,data_volume_alert_percent,data_volume_limit_size,realtime_rx_thrpt,realtime_tx_thrpt,realtime_time,monthly_tx_bytes,monthly_rx_bytes,monthly_time,network_type,network_provider,ppp_status';
+        const cmd = 'sms_received_flag,sms_unread_num,sms_sim_unread_num,sim_msisdn,data_volume_limit_switch,battery_value,battery_vol_percent,network_signalbar,network_rssi,cr_version,iccid,imei,imsi,ipv6_wan_ipaddr,lan_ipaddr,mac_address,msisdn,network_information,Lte_ca_status,rssi,Z5g_rsrp,lte_rsrp,wifi_access_sta_num,loginfo,data_volume_alert_percent,data_volume_limit_size,realtime_rx_thrpt,realtime_tx_thrpt,realtime_time,monthly_tx_bytes,monthly_rx_bytes,monthly_time,network_type,network_provider,ppp_status';
 
         const res = await fetch(`${KANO_baseURL}/goform/goform_get_cmd_process?multi_data=1&isTest=false&cmd=${cmd}&${params.toString()}`, {
             headers: {

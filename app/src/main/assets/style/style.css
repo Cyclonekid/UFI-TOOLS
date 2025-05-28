@@ -903,3 +903,20 @@ li.dragging {
     box-sizing: border-box;
     pointer-events: none;
 }
+
+.tip{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    right: -4px;
+    top: 0px;
+    height: 22px;
+    width: 22px;
+    font-size: 10px;
+    white-space: nowrap;
+    border-radius: 50%;
+    background-color: #ff0000c0;
+    transform: scale(0.8);
+}
