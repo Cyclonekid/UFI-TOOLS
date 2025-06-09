@@ -28,21 +28,19 @@ read_cpu_stat() {
     done < /proc/stat
 }
 
-# 读取两次 CPU 状态（短暂 sleep 提供 delta 差值）
-stats1=$(read_cpu_stat)
+# 读取两次 CPU 状态，纯变量方式保存
+stats1="$(read_cpu_stat)"
 sleep 0.1
-stats2=$(read_cpu_stat)
+stats2="$(read_cpu_stat)"
 
 # 处理为 JSON
 json="{"
 first=1
 
-# 用 echo 到文件临时再读入，或重定向 while 输入，避免子进程影响变量作用域
-echo "$stats1" > /data/local/tmp/stat1.txt
-echo "$stats2" > /data/local/tmp/stat2.txt
-
+# 使用“here string”来将变量作为 while 输入
 while read -r cpu total1 idle1; do
-    line2=$(grep "^$cpu " /data/local/tmp/stat2.txt)
+    # 在 stats2 中查找对应行
+    line2=$(echo "$stats2" | grep "^$cpu ")
     total2=$(echo "$line2" | cut -d' ' -f2)
     idle2=$(echo "$line2" | cut -d' ' -f3)
 
@@ -57,7 +55,9 @@ while read -r cpu total1 idle1; do
     [ $first -eq 0 ] && json="$json,"
     json="$json\"$cpu\":$usage"
     first=0
-done < /data/local/tmp/stat1.txt
+done <<EOF
+$stats1
+EOF
 
 json="$json}"
 echo "$json"
