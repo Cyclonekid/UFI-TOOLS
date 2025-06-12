@@ -63,7 +63,7 @@ const chartUpdater = (prop, value) => {
                     return charA.localeCompare(charB);
                 });
                 const html = value?.map(item => {
-                    return `<div>${item.type}：${Number(item.temp).toFixed(2)}</div>`
+                    return `<div>${item?.type?.replace('-thmzone','')}: ${(Number(item?.temp)/1000).toFixed(2)} ℃</div>`
                 })
                 const cpuTempInfo = document.querySelector('#cpuTempInfo')
                 cpuTempInfo.innerHTML = html.join("")
