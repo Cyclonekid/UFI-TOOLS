@@ -11,9 +11,9 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 20250714,
-      "versionName": "3.4.3",
-      "outputFile": "ZTE-UFI-TOOLS_WEB_V3.4.3_20250714_1923.apk"
+      "versionCode": 20250715,
+      "versionName": "3.4.4",
+      "outputFile": "ZTE-UFI-TOOLS_WEB_V3.4.4_20250715_2153.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/ZTE-UFI-TOOLS_WEB_V3.4.3_20250714_1923.dm"
+        "baselineProfiles/1/ZTE-UFI-TOOLS_WEB_V3.4.4_20250715_2153.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/ZTE-UFI-TOOLS_WEB_V3.4.3_20250714_1923.dm"
+        "baselineProfiles/0/ZTE-UFI-TOOLS_WEB_V3.4.4_20250715_2153.dm"
       ]
     }
   ],
