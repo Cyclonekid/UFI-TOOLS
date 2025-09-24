@@ -264,7 +264,7 @@ function createFixedToast(_id, text, style = {}) {
 }
 
 let modalTimer = null
-function closeModal(txt, time = 300) {
+function closeModal(txt, time = 300, cb = null) {
     if (txt == '#smsList') smsSender && smsSender()
     let el = document.querySelector(txt)
     if (!el) return
@@ -272,6 +272,9 @@ function closeModal(txt, time = 300) {
     modalTimer && clearTimeout(modalTimer)
     modalTimer = setTimeout(() => {
         el.style.display = 'none'
+        setTimeout(() => {
+            cb && cb()
+        }, 30)
     }, time)
 }
 
@@ -603,7 +606,7 @@ Array.from(document.querySelectorAll('.mask'))?.forEach(el => {
         const classList = Array.from(e?.target?.classList || [])
         const id = e.target.id
         //维护一个黑名单，黑名单内的模态框不受影响
-        const blackList = ['updateSoftwareModal', "plugin_store"]
+        const blackList = ['updateSoftwareModal', "plugin_store", "APNViewModal", "APNEditModal"]
         const isCloseable = !blackList.includes(id)
         if (classList && classList.includes('mask') && isCloseable) {
             if (id) {
