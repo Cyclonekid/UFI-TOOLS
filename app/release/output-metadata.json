@@ -13,7 +13,11 @@
       "attributes": [],
       "versionCode": 20251221,
       "versionName": "3.8.3",
+<<<<<<< HEAD
       "outputFile": "ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_0257.apk"
+=======
+      "outputFile": "ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_1643.apk"
+>>>>>>> 831af28 (fix:登录界面介绍不清晰问题)
     }
   ],
   "elementType": "File",
@@ -22,14 +26,22 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
+<<<<<<< HEAD
         "baselineProfiles/1/ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_0257.dm"
+=======
+        "baselineProfiles/1/ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_1643.dm"
+>>>>>>> 831af28 (fix:登录界面介绍不清晰问题)
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
+<<<<<<< HEAD
         "baselineProfiles/0/ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_0257.dm"
+=======
+        "baselineProfiles/0/ZTE-UFI-TOOLS_WEB_V3.8.3_20251221_1643.dm"
+>>>>>>> 831af28 (fix:登录界面介绍不清晰问题)
       ]
     }
   ],
