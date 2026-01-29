@@ -13,7 +13,7 @@
       "attributes": [],
       "versionCode": 20260129,
       "versionName": "3.9.1",
-      "outputFile": "UFI-TOOLS_WEB_V3.9.1_20260129_1942.apk"
+      "outputFile": "UFI-TOOLS_WEB_V3.9.1_20260129_1958.apk"
     }
   ],
   "elementType": "File",
@@ -22,14 +22,14 @@
       "minApi": 28,
       "maxApi": 30,
       "baselineProfiles": [
-        "baselineProfiles/1/UFI-TOOLS_WEB_V3.9.1_20260129_1942.dm"
+        "baselineProfiles/1/UFI-TOOLS_WEB_V3.9.1_20260129_1958.dm"
       ]
     },
     {
       "minApi": 31,
       "maxApi": 2147483647,
       "baselineProfiles": [
-        "baselineProfiles/0/UFI-TOOLS_WEB_V3.9.1_20260129_1942.dm"
+        "baselineProfiles/0/UFI-TOOLS_WEB_V3.9.1_20260129_1958.dm"
       ]
     }
   ],
